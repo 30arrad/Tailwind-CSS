@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <!-- Sidebar -->
+    <div class="bg-gray-800 text-white w-full md:w-64 h-16 md:h-full flex flex-col md:flex-row md:flex-col">
+        <div class="flex justify-between items-center p-4 md:p-6">
+            <span class="text-xl font-bold">Sales Form</span>
+            <button class="md:hidden text-white" onclick="toggleSidebar()">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <nav id="sidebar" class="hidden md:block">
+            <a href="#home" class="block py-2.5 px-4 hover:bg-gray-700">Home</a>
+            <a href="#sales" class="block py-2.5 px-4 hover:bg-gray-700">Sales</a>
+            <a href="#reports" class="block py-2.5 px-4 hover:bg-gray-700">Reports</a>
+            <a href="#settings" class="block py-2.5 px-4 hover:bg-gray-700">Settings</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6">
+        <h1 class="text-3xl font-bold mb-4 text-center">Sales Form</h1>
+        <hr>
+        <br>
+        
+        <!-- Customer Information Form -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Customer Information</h2>
+            <form class="space-y-4 flex space-x-5">
+                <div>
+                    <label for="customerName" class="block text-sm font-medium text-gray-700">Customer Name</label>
+                    <input type="text" id="customerName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                    <input type="date" id="date" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="totalSellAmount" class="block text-sm font-medium text-gray-700">Total Sell Amount</label>
+                    <input type="number" id="totalSellAmount" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="cashAmount" class="block text-sm font-medium text-gray-700">Cash Amount</label>
+                    <input type="number" id="cashAmount" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="collectionAmount" class="block text-sm font-medium text-gray-700">Collection Amount</label>
+                    <input type="number" id="collectionAmount" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="discountAmount" class="block text-sm font-medium text-gray-700">Discount Amount</label>
+                    <input type="number" id="discountAmount" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <hr>
+        <br>
+
+        <!-- Items Information Form -->
+        <div>
+            <h2 class="text-2xl font-bold mb-4">Items Information</h2>
+            <form class="space-y-4 flex space-x-5">
+                <div>
+                    <label for="itemName" class="block text-sm font-medium text-gray-700">Item Name</label>
+                    <input type="text" id="itemName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="totalQuantity" class="block text-sm font-medium text-gray-700">Total Quantity</label>
+                    <input type="number" id="totalQuantity" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="totalPrice" class="block text-sm font-medium text-gray-700">Total Price</label>
+                    <input type="number" id="totalPrice" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <button type="button" onclick="addItem()" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">Add Item</button>
+                </div>
+            </form>
+
+            <!-- Dynamic Items List -->
+            <div id="itemsList" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            if (sidebar.classList.contains("hidden")) {
+                sidebar.classList.remove("hidden");
+            } else {
+                sidebar.classList.add("hidden");
+            }
+        }
+
+        // Store items dynamically
+        let items = [];
+
+        // Function to add items to the list
+        function addItem() {
+            const itemName = document.getElementById("itemName").value.trim();
+            const totalQuantity = parseInt(document.getElementById("totalQuantity").value);
+            const totalPrice = parseFloat(document.getElementById("totalPrice").value);
+
+            if (!itemName || isNaN(totalQuantity) || isNaN(totalPrice) || totalQuantity <= 0 || totalPrice <= 0) {
+                alert("Please provide valid item details!");
+                return;
+            }
+
+            // Add item to the array
+            items.push({
+                itemName,
+                totalQuantity,
+                totalPrice
+            });
+
+            // Reset fields
+            document.getElementById("itemName").value = '';
+            document.getElementById("totalQuantity").value = '';
+            document.getElementById("totalPrice").value = '';
+
+            // Update the UI
+            updateItemsList();
+        }
+
+        // Function to update the list of items
+        function updateItemsList() {
+            const itemsContainer = document.getElementById("itemsList");
+            itemsContainer.innerHTML = '';
+
+            if (items.length === 0) {
+                itemsContainer.innerHTML = '<p class="text-gray-500">No items added yet.</p>';
+                return;
+            }
+
+            // Create a table to display items
+            const table = document.createElement('table');
+            table.className = 'table-auto w-full border-collapse border border-gray-300';
+
+            // Create table header
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `
+                <th class="border border-gray-300 p-2">Item Name</th>
+                <th class="border border-gray-300 p-2">Quantity</th>
+                <th class="border border-gray-300 p-2">Price</th>
+                <th class="border border-gray-300 p-2">Actions</th>
+            `;
+            table.appendChild(headerRow);
+
+            // Populate rows with items
+            items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="border border-gray-300 p-2">${item.itemName}</td>
+                    <td class="border border-gray-300 p-2">${item.totalQuantity}</td>
+                    <td class="border border-gray-300 p-2">${item.totalPrice.toFixed(2)}</td>
+                    <td class="border border-gray-300 p-2">
+                        <button class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
+                            onclick="removeItem(${index})">Remove</button>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+
+            itemsContainer.appendChild(table);
+        }
+
+        // Function to remove an item by index
+        function removeItem(index) {
+            items.splice(index, 1);
+            updateItemsList();
+        }
+
+        // Initialize the items list
+        document.addEventListener('DOMContentLoaded', updateItemsList);
+    </script>
+
+</body>
+</html>
